@@ -6,15 +6,15 @@
 
 using namespace godot;
 
-class ExampleClass : public RefCounted {
-	GDCLASS(ExampleClass, RefCounted)
+class Example2Class : public RefCounted {
+	GDCLASS(Example2Class, RefCounted)
 
 protected:
 	static void _bind_methods();
 
 public:
-	ExampleClass() = default;
-	~ExampleClass() override = default;
+	Example2Class() = default;
+	~Example2Class() override = default;
 
 	void print_type(const Variant &p_variant) const;
 };

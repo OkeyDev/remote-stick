@@ -2,5 +2,5 @@ extends Node
 
 
 func _ready() -> void:
-	var example := ExampleClass.new()
+	var example := Example2Class.new()
 	example.print_type(example)
