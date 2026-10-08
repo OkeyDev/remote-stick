@@ -1,3 +1,4 @@
 #include "models.h"
 
-void movemnt_set_state(MovementState state);
+void movement_set_state(MovementState state);
+MovementState get_movement_state();

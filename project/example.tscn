@@ -1,6 +1,45 @@
 [gd_scene format=3 uid="uid://dh0oj81pufivs"]
 
-[ext_resource type="Script" uid="uid://2uo3enqg405i" path="res://scripts/server.gd" id="1_2jas5"]
+[sub_resource type="BoxMesh" id="BoxMesh_6gkck"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lsv8k"]
+albedo_color = Color(1, 0.13999999, 0.13999999, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_1gods"]
+size = Vector2(10, 10)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_pxty4"]
+
+[sub_resource type="Environment" id="Environment_n3ha5"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_pxty4"]
+
+[sub_resource type="Compositor" id="Compositor_1gods"]
 
 [node name="Node" type="Node" unique_id=1911765273]
-script = ExtResource("1_2jas5")
+
+[node name="NetworkClass" type="NetworkClass" parent="." unique_id=1555681822]
+
+[node name="Vehicle" type="Vehicle" parent="." unique_id=692697710]
+mesh = SubResource("BoxMesh_6gkck")
+surface_material_override/0 = SubResource("StandardMaterial3D_lsv8k")
+
+[node name="Camera3D" type="Camera3D" parent="Vehicle" unique_id=641735770]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 1.458, 1.338)
+
+[node name="World" type="MeshInstance3D" parent="." unique_id=677018474]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6690576, 0)
+mesh = SubResource("PlaneMesh_1gods")
+
+[node name="Capsule" type="MeshInstance3D" parent="World" unique_id=2147334390]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.421, 1.086, -3.163)
+mesh = SubResource("CapsuleMesh_pxty4")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2031629479]
+environment = SubResource("Environment_n3ha5")
+camera_attributes = SubResource("CameraAttributesPractical_pxty4")
+compositor = SubResource("Compositor_1gods")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment" unique_id=202871252]
+transform = Transform3D(1, 0, 0, 0, 0.794528, 0.6072276, 0, -0.6072276, 0.794528, 0, 2.21341, 3.275897)
+shadow_enabled = true

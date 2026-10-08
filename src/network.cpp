@@ -1,4 +1,6 @@
 #include "car_code/network.h"
+#include "car_code/models.h"
+#include "car_code/movement.h"
 #include "godot_cpp/core/print_string.hpp"
 #include "godot_cpp/variant/variant.hpp"
 
@@ -9,6 +11,7 @@
 #include <unistd.h>
 
 #include <gdextension_interface.h>
+#include <cstdint>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
@@ -41,6 +44,13 @@ static void set_nonblocking(int s) {
 	}
 }
 
+char MAGIC_WORD[] = "move";
+
+struct MovementPacket 
+{
+	MovementState m_state;
+};
+
 int net_init() {
 	serverfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (serverfd < 0) {
@@ -69,7 +79,7 @@ int net_init() {
 		return -1;
 	}
 
-	set_nonblocking(serverfd);
+	//set_nonblocking(serverfd);
 
 	has_active_client = false;
 	last_packet_time_ms = 0;
@@ -93,12 +103,12 @@ void net_update() {
 		if (bytes_read < 0) {
 			// Очередь пуста — выходим без блокировки потока
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				break;
+				continue;
 			}
 			if (errno != EINTR) {
 				print_error(vformat("recvfrom error: %d", errno));
 			}
-			break;
+			continue;
 		}
 
 		buffer[bytes_read] = '\0';
@@ -114,6 +124,15 @@ void net_update() {
 		const char *response = "OK\n";
 		sendto(serverfd, response, std::strlen(response), 0,
 				(const struct sockaddr *)&client_addr, addrlen);
+
+		if (strncmp(buffer, MAGIC_WORD, sizeof(MAGIC_WORD) - 1) == 0) {
+			MovementState state = (MovementState)atoi(buffer + sizeof(MAGIC_WORD) - 1);
+			print_line(vformat("good packet: %d", (int)state));
+			movement_set_state(state);
+		}
+		else {
+			print_line("failed to compare magic word");
+		}
 	}
 
 	if (has_active_client && (get_current_time_ms() - last_packet_time_ms > CLIENT_TIMEOUT_MS)) {
